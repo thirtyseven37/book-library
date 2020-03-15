@@ -80,7 +80,7 @@ describe('Book controller (e2e)', () => {
         statusCode: 400,
         message: 'Bad Request',
         error: [ 'rating must not be greater than 5' ]
-      })
+      });
   });
 
   it(`/POST valid books and get proper /GET result`, async () => {
@@ -92,7 +92,8 @@ describe('Book controller (e2e)', () => {
         isbn: "978-3-16-148410-0",
         pages: 123,
         rating: 5
-      });
+      })
+      .expect(201);
 
     await request(app.getHttpServer())
       .post('/books')
@@ -102,7 +103,8 @@ describe('Book controller (e2e)', () => {
         isbn: "978-3-16-148410-0",
         pages: 123,
         rating: 5
-      });
+      })
+      .expect(201);
 
     return request(app.getHttpServer())
       .get('/books')
@@ -124,7 +126,99 @@ describe('Book controller (e2e)', () => {
           pages: 123,
           rating: 5
         }
-      ])
+      ]);
+  });
+
+  it(`try to /PUT not existing book`, async () => {
+    return request(app.getHttpServer())
+      .put('/books/2')
+      .send({
+        title: "Catch 22",
+        author: "Joseph Heller",
+        isbn: "978-3-16-148410-0",
+        pages: 123,
+        rating: 5
+      })
+      .expect(404)
+  });
+
+  it(`/POST valid books, /GET result, /PATCH book and /GET proper result`, async () => {
+    await request(app.getHttpServer())
+      .post('/books')
+      .send({
+        title: "Catch 22",
+        author: "Joseph Heller",
+        isbn: "978-3-16-148410-0",
+        pages: 123,
+        rating: 5
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/books')
+      .send({
+        title: "Clean Code",
+        author: "Robert C. Martin",
+        isbn: "978-3-16-148410-0",
+        pages: 123,
+        rating: 5
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .get('/books')
+      .expect(200)
+      .expect([
+        {
+          id: 1,
+          title: 'Catch 22',
+          author: 'Joseph Heller',
+          isbn: '978-3-16-148410-0',
+          pages: 123,
+          rating: 5
+        },
+        {
+          id: 2,
+          title: 'Clean Code',
+          author: 'Robert C. Martin',
+          isbn: '978-3-16-148410-0',
+          pages: 123,
+          rating: 5
+        }
+      ]);
+
+    await request(app.getHttpServer())
+      .put('/books/2')
+      .send({
+        title: "Clean Code",
+        author: "Robert C. Martin",
+        isbn: "978-3-16-148410-0",
+        pages: 2137,
+        rating: 5
+      })
+      .expect(200);
+
+    return request(app.getHttpServer())
+      .get('/books')
+      .expect(200)
+      .expect([
+        {
+          id: 1,
+          title: 'Catch 22',
+          author: 'Joseph Heller',
+          isbn: '978-3-16-148410-0',
+          pages: 123,
+          rating: 5
+        },
+        {
+          id: 2,
+          title: 'Clean Code',
+          author: 'Robert C. Martin',
+          isbn: '978-3-16-148410-0',
+          pages: 2137,
+          rating: 5
+        }
+      ]);
   });
 
   afterAll(async () => {
