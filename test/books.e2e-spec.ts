@@ -221,6 +221,27 @@ describe('Book controller (e2e)', () => {
       ]);
   });
 
+  it(`/POST valid book, /DELETE result and /DELETE again`, async () => {
+    await request(app.getHttpServer())
+      .post('/books')
+      .send({
+        title: "Catch 22",
+        author: "Joseph Heller",
+        isbn: "978-3-16-148410-0",
+        pages: 123,
+        rating: 5
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete('/books/1')
+      .expect(204);
+
+    return request(app.getHttpServer())
+      .delete('/books/1')
+      .expect(404);
+  });
+
   afterAll(async () => {
     await app.close();
   });
