@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class BookEntity {
+export class Book {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,8 +15,8 @@ export class BookEntity {
   isbn: string;
 
   @Column({ type: 'int' })
-  pages: string;
+  pages: number;
 
   @Column({ type: 'int' })
-  rating: string;
+  rating: number;
 }

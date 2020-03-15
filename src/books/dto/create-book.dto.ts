@@ -10,7 +10,7 @@ export class CreateBookDto {
   author: string;
 
   @IsISBN()
-  isbn: number;
+  isbn: string;
 
   @IsInt()
   @IsPositive()
