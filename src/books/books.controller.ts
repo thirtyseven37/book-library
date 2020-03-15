@@ -7,14 +7,13 @@ export class BooksController {
   constructor(private readonly bookService: BooksService) {}
 
   @Get()
-  async getAll() {
+  async findAll() {
     return await this.bookService.findAll();
   }
 
   @Post()
   async create(@Body() createBookDto: CreateBookDto) {
-    await this.bookService.create(createBookDto);
-    return createBookDto;
+    return await this.bookService.create(createBookDto);
   }
 
   @Patch()
